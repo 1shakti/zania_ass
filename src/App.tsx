@@ -1,10 +1,7 @@
-
+import Home from "./pages/Home";
 
 function App() {
-
-  return (
-    <div>Project setup</div>
-  )
+  return <Home />;
 }
 
-export default App
+export default App;
