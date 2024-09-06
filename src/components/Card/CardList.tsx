@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "../../types";
 import CardItem from "./CardItem";
 import { Draggable, Droppable } from "react-beautiful-dnd";
@@ -44,4 +45,4 @@ function CardList({ cards, onClickCard }: CardProps) {
   );
 }
 
-export default CardList;
+export default memo(CardList);

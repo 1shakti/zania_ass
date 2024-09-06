@@ -1,35 +1,49 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CardList } from "../components";
 import CardOverlay from "../components/Overlay/CardOverlay";
 import { DragDropContext } from "react-beautiful-dnd";
 import { useDragAndDrop } from "../custom-hooks/useDragAndDrop";
+import { ImSpinner2 } from "react-icons/im";
+import Timer from "../components/Timer/Timer";
 
 function CardContainer() {
-  const { cards, setCards, onDragEnd } = useDragAndDrop();
+  const { cards, setCards, onDragEnd, isSaving, lastSavedTime } = useDragAndDrop();
   const [SelectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`public/data.json`)
-      .then((response) => response.json())
-      .then((jsonData) => setCards(jsonData))
-      .catch((error) => console.error("Error fetching the JSON data:", error));
+    const fetchCards = async () => {
+      try{
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        setCards(data);
+      }catch(e){
+        console.log("error",e)
+      }
+
+    };
+    fetchCards();
   }, [setCards]);
 
-  const handleCardClick = (image: string): void => {
+  const handleCardClick = useCallback((image: string) => {
     setSelectedImage(image);
-  };
+  }, []);
 
-  const handleOverlayClose = (): void => {
+  const handleOverlayClose = useCallback(() => {
     setSelectedImage(null);
-  };
+  }, []);
 
   return (
     <>
-      <div>
+      {isSaving && (
+          <div className="saving-indicator">
+            <ImSpinner2 className="animate-spin text-gray-500 text-3xl" />
+            Saving data... 
+          </div>
+        )}
+        <Timer lastSavedTime={lastSavedTime} />
         <DragDropContext onDragEnd={onDragEnd}>
           <CardList cards={cards} onClickCard={handleCardClick} />
         </DragDropContext>
-      </div>
       {SelectedImage && (
         <CardOverlay image={SelectedImage} onClose={handleOverlayClose} />
       )}
