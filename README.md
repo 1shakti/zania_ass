@@ -15,9 +15,10 @@ This project implements a simple full-stack application using React for the fron
 
 ## Tech Stack
 
-- **Frontend**: React, `msw` (Mock Service Worker)
-- **Styling**: Tailwind CSS 
-- **Data Storage**: Local Storage (for persistence across reloads)
+- **Frontend**: React, `msw` (Mock Service Worker),Typescript
+- **Styling**: Tailwind CSS
+- **drag-and-drop**: react-beautiful-dnd.
+- **Data Storage**: Local Storage (for persistence across reloads).
 
 ## Prerequisites
 Ensure you have the following installed:
