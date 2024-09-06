@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { CardList } from "../components";
-import { Card } from "../types";
 import CardOverlay from "../components/Overlay/CardOverlay";
+import { DragDropContext } from "react-beautiful-dnd";
+import { useDragAndDrop } from "../custom-hooks/useDragAndDrop";
 
 function CardContainer() {
-  const [data, setData] = useState<Card[]>([]);
+  const { cards, setCards, onDragEnd } = useDragAndDrop();
   const [SelectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`public/data.json`)
       .then((response) => response.json())
-      .then((jsonData) => setData(jsonData))
+      .then((jsonData) => setCards(jsonData))
       .catch((error) => console.error("Error fetching the JSON data:", error));
-  }, []);
+  }, [setCards]);
 
   const handleCardClick = (image: string): void => {
     setSelectedImage(image);
@@ -24,7 +25,11 @@ function CardContainer() {
 
   return (
     <>
-      <CardList cards={data} onClickCard={handleCardClick} />
+      <div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <CardList cards={cards} onClickCard={handleCardClick} />
+        </DragDropContext>
+      </div>
       {SelectedImage && (
         <CardOverlay image={SelectedImage} onClose={handleOverlayClose} />
       )}
