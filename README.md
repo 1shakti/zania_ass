@@ -1,5 +1,5 @@
 # Full Stack Application
-Click [here](https://main--zingy-tanuki-dd5a78.netlify.app/) for the demo.
+Click [here](https://zania-ass.vercel.app/) for the demo.
 
 ## Overview
 
