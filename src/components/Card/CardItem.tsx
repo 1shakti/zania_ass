@@ -1,14 +1,43 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Card } from "../../types";
+import { useDrag, useDrop } from "react-dnd";
 import { ImSpinner2 } from "react-icons/im";
 
-interface carditems {
+interface CardItemProps {
   card: Card;
-  onClick: () => void;
+  index: number;
+  onClickCard: (image: string) => void;
+  moveCard: (dragIndex: number, hoverIndex: number) => void;
 }
 
-function CardItem({ card, onClick }: carditems) {
+function CardItem({ card, index, onClickCard, moveCard }: CardItemProps) {
   const [loading, setLoading] = useState<boolean>(true);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [{ isDragging }, drag] = useDrag({
+    type: "CARD",
+    item: { index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: "CARD",
+    hover(item: { index: number }) {
+      if (!ref.current) return;
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) return;
+
+      moveCard(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
 
   const handleImageLoad = () => {
     setLoading(false);
@@ -16,8 +45,9 @@ function CardItem({ card, onClick }: carditems) {
 
   return (
     <div
-      className="card bg-white shadow-md rounded-lg p-4 cursor-pointer"
-      onClick={onClick}
+      ref={ref}
+      className={`card bg-white shadow-md rounded-lg p-4 cursor-pointer ${isDragging ? "opacity-50" : "opacity-100"}`}
+      onClick={() => onClickCard(card.thumbnail)}
     >
       <h3 className="mt-2 text-lg font-semibold">{card.title}</h3>
       <div>

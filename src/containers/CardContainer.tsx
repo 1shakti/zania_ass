@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { CardList } from "../components";
 import CardOverlay from "../components/Overlay/CardOverlay";
-import { DragDropContext } from "react-beautiful-dnd";
 import { useDragAndDrop } from "../custom-hooks/useDragAndDrop";
 import { ImSpinner2 } from "react-icons/im";
 import Timer from "../components/Timer/Timer";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function CardContainer() {
-  const { cards, setCards, onDragEnd, isSaving, lastSavedTime } =
-    useDragAndDrop();
+  const { cards, setCards, moveCard, isSaving, lastSavedTime } = useDragAndDrop();
   const [SelectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ function CardContainer() {
   }, []);
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <div className="flex items-center mr-3 mb-8">
         <Timer lastSavedTime={lastSavedTime} />
         {isSaving && (
@@ -43,13 +43,11 @@ function CardContainer() {
           </div>
         )}
       </div>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <CardList cards={cards} onClickCard={handleCardClick} />
-      </DragDropContext>
+      <CardList cards={cards} onClickCard={handleCardClick} moveCard={moveCard} />
       {SelectedImage && (
         <CardOverlay image={SelectedImage} onClose={handleOverlayClose} />
       )}
-    </>
+    </DndProvider>
   );
 }
 

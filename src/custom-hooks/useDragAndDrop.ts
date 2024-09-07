@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { DropResult } from "react-beautiful-dnd";
 import { Card } from "../types";
 
 export function useDragAndDrop() {
@@ -31,6 +30,7 @@ export function useDragAndDrop() {
         previousCardsRef.current = [...cards];
       } catch (e) {
         console.log("Error saving data:", e);
+        setIsSaving(false);
       }
     };
 
@@ -41,16 +41,12 @@ export function useDragAndDrop() {
     return () => clearInterval(intervalId);
   }, [cards]);
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    const sourceIndex = result.source.index;
-    const destinationIndex = result.destination.index;
-    if (sourceIndex === destinationIndex) return;
+  const moveCard = (dragIndex: number, hoverIndex: number) => {
     const updatedCards = Array.from(cards);
-    const [removedCard] = updatedCards.splice(sourceIndex, 1);
-    updatedCards.splice(destinationIndex, 0, removedCard);
+    const [movedCard] = updatedCards.splice(dragIndex, 1);
+    updatedCards.splice(hoverIndex, 0, movedCard);
     setCards(updatedCards);
   };
 
-  return { cards, setCards, onDragEnd, isSaving, lastSavedTime };
+  return { cards, setCards, moveCard, isSaving, lastSavedTime };
 }
